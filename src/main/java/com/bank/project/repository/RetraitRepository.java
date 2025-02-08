@@ -1,12 +1,13 @@
 package com.bank.project.repository;
 
-import com.bank.project.entity.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ClientRepository extends JpaRepository<Client, String> {
-    // You can add custom query methods here if needed, like:
-    // Client findByNomClient(String nomClient);
-}
+import com.bank.project.entity.Retrait;
 
+
+@Repository
+public interface RetraitRepository extends JpaRepository<Retrait, Integer> {
+    // You can add custom query methods here if needed, like:
+    // List<Retrait> findByNCompte(String nCompte);
+}

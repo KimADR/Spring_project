@@ -1,31 +1,39 @@
 package com.bank.project.entity;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "client")
 public class Client {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long compteId;
+    @Column(name = "n_compte")
+    private String nCompte;
 
+    @Column(name = "nomclient")
     private String nomClient;
-    private Double solde;
 
-    public Client() {}
+    @Column(name = "solde")
+    private BigDecimal solde;
 
-    public Client(Long compteId, String nomClient, Double solde) {
-        this.compteId = compteId;
+    // Constructors
+    public Client() {
+    }
+
+    public Client(String nCompte, String nomClient, BigDecimal solde) {
+        this.nCompte = nCompte;
         this.nomClient = nomClient;
         this.solde = solde;
     }
 
-    public Long getCompteId() {
-        return compteId;
+    // Getters and setters
+    public String getnCompte() {
+        return nCompte;
     }
 
-    public void setCompteId(Long compteId) {
-        this.compteId = compteId;
+    public void setnCompte(String nCompte) {
+        this.nCompte = nCompte;
     }
 
     public String getNomClient() {
@@ -36,16 +44,21 @@ public class Client {
         this.nomClient = nomClient;
     }
 
-    public Double getSolde() {
+    public BigDecimal getSolde() {
         return solde;
     }
 
-    public void setSolde(Double solde) {
+    public void setSolde(BigDecimal solde) {
         this.solde = solde;
     }
 
     @Override
     public String toString() {
-        return "Client [compteId=" + compteId + ", nomClient=" + nomClient + ", solde=" + solde + "]";
+        return "Client{" +
+                "nCompte='" + nCompte + '\'' +
+                ", nomClient='" + nomClient + '\'' +
+                ", solde=" + solde +
+                '}';
     }
 }
+

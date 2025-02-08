@@ -14,67 +14,56 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.HttpStatus;
+
 import com.bank.project.entity.Client;
-import com.bank.project.repository.ClientRepository;
+import com.bank.project.service.ClientService;
 
 @RestController
-@RequestMapping("/api/client")
+@RequestMapping("/api/clients")
 
 public class ClientController {
-	
-	@Autowired
-	private final ClientRepository clientRepository;
-	
-	
-	public ClientController (ClientRepository clientRepository) {
-		this.clientRepository=clientRepository;
-	}
-	
-	@GetMapping("/list")
-	public List<Client> getClient(){
-	  return clientRepository.findAll();	
-	}
-	
-	@PostMapping("/save")
-	public ResponseEntity<Client> createClient(@RequestBody Client client){
-		Client savedClient = clientRepository.save(client);
-		return ResponseEntity.ok(savedClient);
-	}
-	
-	@PutMapping("/update/{id}")
-	public ResponseEntity<Client> updateClient(@PathVariable("id") Long id, @RequestBody Client client) {
-	    Optional<Client> clientOptional = clientRepository.findById(id);
-	    
-	    if (clientOptional.isPresent()) {
-	        Client client1 = clientOptional.get();
-	        client1.setNomClient(client.getNomClient()); // Update with provided values
-	        client1.setSolde(client.getSolde());
-	        Client updatedClient = clientRepository.save(client1);
-	        return ResponseEntity.ok(updatedClient);
-	    } else {
-	        return ResponseEntity.notFound().build();
-	    }
-	}
-	
-	@GetMapping("/list/{id}")
-	public ResponseEntity<Client> getClientById(@PathVariable("id") Long id) {
-	    Optional<Client> clientOptional = clientRepository.findById(id);
 
-	    if (clientOptional.isPresent()) {
-	        return ResponseEntity.ok(clientOptional.get());
-	    } else {
-	        return ResponseEntity.notFound().build();
-	    }
-	}
-	
-	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<Void> deleteClient(@PathVariable("id") Long id) {
-	    if (clientRepository.existsById(id)) {
-	        clientRepository.deleteById(id);
-	        return ResponseEntity.noContent().build();
-	    } else {
-	        return ResponseEntity.notFound().build(); 
-	    }
-	}
+    @Autowired
+    private ClientService clientService;
+
+    @GetMapping
+    public List<Client> getAllClients() {
+        return clientService.getAllClients();
+    }
+
+    @GetMapping("/{nCompte}")
+    public ResponseEntity<Client> getClientByNCompte(@PathVariable("nCompte") String nCompte) {
+        Optional<Client> client = clientService.getClientByNCompte(nCompte);
+        return client.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Client createClient(@RequestBody Client client) {
+        return clientService.createClient(client);
+    }
+
+    @PutMapping("/{nCompte}")
+    public ResponseEntity<Client> updateClient(@PathVariable("nCompte") String nCompte, @RequestBody Client clientDetails) {
+        try {
+            Client updatedClient = clientService.updateClient(nCompte, clientDetails);
+            return ResponseEntity.ok(updatedClient);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{nCompte}")
+    public ResponseEntity<Void> deleteClient(@PathVariable("nCompte") String nCompte) {
+        try {
+            clientService.deleteClient(nCompte);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
 
